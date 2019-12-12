@@ -1,0 +1,33 @@
+apiVersion: networking.istio.io/v1alpha3  
+kind: Gateway  
+metadata:  
+  name: elk-gateway  
+spec:  
+  selector:  
+    istio: ingressgateway # use Istio default gateway implementation  
+  servers:  
+  - port:  
+      name: http  
+      number: 81  
+      protocol: HTTP  
+    hosts:  
+    - '*'  
+---  
+apiVersion: networking.istio.io/v1alpha3  
+kind: VirtualService  
+metadata:  
+  name: elasticsearch 
+spec:  
+  hosts:  
+  - "*"  
+  gateways:  
+  - elk-gateway
+  http:  
+  - match:  
+    - uri:  
+        prefix: /  
+    route:  
+    - destination:  
+        port:  
+          number: 9200  
+        host: elasticsearch
